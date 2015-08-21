@@ -43,11 +43,14 @@ import org.fenixedu.academic.domain.student.PersonalIngressionData;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
+import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
 import org.fenixedu.academic.predicate.AccessControl;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
 import org.fenixedu.ulisboa.specifications.domain.student.access.StudentAccessServices;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsBaseController;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsController;
+import org.joda.time.DateTime;
 import org.joda.time.YearMonthDay;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -138,6 +141,11 @@ public class FirstTimeCandidacyController extends FenixeduUlisboaSpecificationsB
         ExecutionSemester semester = ExecutionSemester.readActualExecutionSemester();
         StudentCurricularPlan
                 .createBolonhaStudentCurricularPlan(registration, degreeCurricularPlan, new YearMonthDay(), semester);
+
+        RegistrationState registeredState = registration.getActiveState();
+        registeredState.setStateDate(registeredState.getStateDate().minusMinutes(1));
+        RegistrationState.createRegistrationState(registration, AccessControl.getPerson(), new DateTime(),
+                RegistrationStateType.INACTIVE);
 
         return registration;
     }
