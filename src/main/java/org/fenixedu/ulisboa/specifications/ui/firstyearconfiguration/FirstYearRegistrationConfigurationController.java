@@ -113,6 +113,7 @@ public class FirstYearRegistrationConfigurationController extends FenixeduUlisbo
                 firstYearRegistrationConfiguration = new FirstYearRegistrationConfiguration(bean.getDegree());
             }
             firstYearRegistrationConfiguration.setRequiresClassesEnrolment(bean.getRequiresClassesEnrolment());
+            firstYearRegistrationConfiguration.setRequiresShiftsEnrolment(bean.getRequiresShiftsEnrolment());
             firstYearRegistrationConfiguration.setRequiresCoursesEnrolment(bean.getRequiresCoursesEnrolment());
             firstYearRegistrationConfiguration.setRequiresVaccination(bean.getRequiresVaccination());
         } else {
@@ -176,6 +177,7 @@ public class FirstYearRegistrationConfigurationController extends FenixeduUlisbo
         private boolean requiresVaccination;
         private boolean requiresCoursesEnrolment;
         private boolean requiresClassesEnrolment;
+        private boolean requiresShiftsEnrolment;
 
         public Degree getDegree() {
             return this.degree;
@@ -236,11 +238,20 @@ public class FirstYearRegistrationConfigurationController extends FenixeduUlisbo
                 this.setRequiresVaccination(firstYearRegistrationConfiguration.getRequiresVaccination());
                 this.setRequiresCoursesEnrolment(firstYearRegistrationConfiguration.getRequiresCoursesEnrolment());
                 this.setRequiresClassesEnrolment(firstYearRegistrationConfiguration.getRequiresClassesEnrolment());
+                this.setRequiresShiftsEnrolment(firstYearRegistrationConfiguration.getRequiresShiftsEnrolment());
             }
         }
 
         public boolean hasFieldsAsTrue() {
-            return requiresClassesEnrolment || requiresCoursesEnrolment || requiresVaccination;
+            return requiresClassesEnrolment || requiresCoursesEnrolment || requiresShiftsEnrolment || requiresVaccination;
+        }
+
+        public boolean getRequiresShiftsEnrolment() {
+            return requiresShiftsEnrolment;
+        }
+
+        public void setRequiresShiftsEnrolment(boolean requiresShiftsEnrolment) {
+            this.requiresShiftsEnrolment = requiresShiftsEnrolment;
         }
     }
 }

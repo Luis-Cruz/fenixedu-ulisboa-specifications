@@ -101,6 +101,7 @@ ${portal.toolkit()}
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresVaccination"/></th>
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresCoursesEnrolment"/></th>
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresClassesEnrolment"/></th>
+<th><spring:message code="label.FirstYearRegistrationConfiguration.requiresShiftsEnrolment"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -134,6 +135,7 @@ ${portal.toolkit()}
 "requiresvaccination" : "<c:if test="${searchResult.requiresVaccination}"><spring:message code="label.true" /></c:if><c:if test="${not searchResult.requiresVaccination}"><spring:message code="label.false" /></c:if>",
 "requirescoursesenrolment" : "<c:if test="${searchResult.requiresCoursesEnrolment}"><spring:message code="label.true" /></c:if><c:if test="${not searchResult.requiresCoursesEnrolment}"><spring:message code="label.false" /></c:if>",
 "requiresclassesenrolment" : "<c:if test="${searchResult.requiresClassesEnrolment}"><spring:message code="label.true" /></c:if><c:if test="${not searchResult.requiresClassesEnrolment}"><spring:message code="label.false" /></c:if>",
+"requiresshiftsenrolment" : "<c:if test="${searchResult.requiresShiftsEnrolment}"><spring:message code="label.true" /></c:if><c:if test="${not searchResult.requiresShiftsEnrolment}"><spring:message code="label.false" /></c:if>",
 			},
             </c:forEach>
     ];
@@ -152,6 +154,7 @@ ${portal.toolkit()}
 			{ data: 'requiresvaccination' },
 			{ data: 'requirescoursesenrolment' },
 			{ data: 'requiresclassesenrolment' },
+			{ data: 'requiresshiftsenrolment' },
 			
 		],
 		"data" : searchfirstyearregistrationconfigurationDataSet,

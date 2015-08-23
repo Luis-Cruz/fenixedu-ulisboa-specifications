@@ -96,6 +96,7 @@ ${portal.toolkit()}
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresVaccination"/></th>
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresCoursesEnrolment"/></th>
 <th><spring:message code="label.FirstYearRegistrationConfiguration.requiresClassesEnrolment"/></th>
+<th><spring:message code="label.FirstYearRegistrationConfiguration.requiresShiftsEnrolment"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -113,11 +114,15 @@ ${portal.toolkit()}
 						<a onclick="changeCheckBoxesState('.requiresCoursesEnrolment', false)"><spring:message code="label.event.firstYearConfiguration.unselectAll" /> </a>
 					</td>
 					<td>
-						<a onclick="changeCheckBoxesState('.requiresClassesEnrolment', true)"><spring:message code="label.event.firstYearConfiguration.selectAll" /> </a>
+						<a onclick="changeCheckBoxesState('.requiresClassesEnrolment', true); changeCheckBoxesState('.requiresShiftsEnrolment', false)"><spring:message code="label.event.firstYearConfiguration.selectAll" /> </a>
 						<br />
 						<a onclick="changeCheckBoxesState('.requiresClassesEnrolment', false)"><spring:message code="label.event.firstYearConfiguration.unselectAll" /> </a>
 					</td>
-					
+					<td>
+						<a onclick="changeCheckBoxesState('.requiresShiftsEnrolment', true);changeCheckBoxesState('.requiresClassesEnrolment', false)"><spring:message code="label.event.firstYearConfiguration.selectAll" /> </a>
+						<br />
+						<a onclick="changeCheckBoxesState('.requiresShiftsEnrolment', false)"><spring:message code="label.event.firstYearConfiguration.unselectAll" /> </a>
+					</td>
 				</tr>
 				<c:forEach items="${editResultsDataSet}" var="searchResult">
 				<form class="degreeForm" action="${pageContext.request.contextPath}/fenixedu-ulisboa-specifications/firstyearconfiguration/firstyearregistrationconfiguration/edit/save" method="POST">
@@ -143,11 +148,35 @@ ${portal.toolkit()}
 						</td>
 						<td>
 							<c:if test="${searchResult.requiresClassesEnrolment}">
-								<input type="checkbox" name="requiresClassesEnrolment" checked class="requiresClassesEnrolment">							
+								<input id="${searchResult.degreeCode}-classEnrolment" type="checkbox" name="requiresClassesEnrolment" checked class="requiresClassesEnrolment">							
 							</c:if>
 							<c:if test="${!searchResult.requiresClassesEnrolment}">
-								<input type="checkbox" name="requiresClassesEnrolment" class="requiresClassesEnrolment">
+								<input  id="${searchResult.degreeCode}-classEnrolment"  type="checkbox" name="requiresClassesEnrolment" class="requiresClassesEnrolment">
 							</c:if>
+							<script>
+								$("#${searchResult.degreeCode}-classEnrolment").on("change", function(){
+									newValue = $("#${searchResult.degreeCode}-classEnrolment")[0].checked;
+									if(newValue){
+										$("#${searchResult.degreeCode}-shiftEnrolment")[0].checked= false;
+									}
+								});
+							</script>
+						</td>
+						<td>
+							<c:if  test="${searchResult.requiresShiftsEnrolment}">
+								<input id="${searchResult.degreeCode}-shiftEnrolment" type="checkbox" name="requiresShiftsEnrolment" checked class="requiresShiftsEnrolment">							
+							</c:if>
+							<c:if test="${!searchResult.requiresShiftsEnrolment}">
+								<input id="${searchResult.degreeCode}-shiftEnrolment"  type="checkbox" name="requiresShiftsEnrolment" class="requiresShiftsEnrolment">
+							</c:if>
+							<script>
+								$("#${searchResult.degreeCode}-shiftEnrolment").on("change", function(){
+									newValue = $("#${searchResult.degreeCode}-shiftEnrolment")[0].checked;
+									if(newValue){
+										$("#${searchResult.degreeCode}-classEnrolment")[0].checked=false;
+									}
+								});
+							</script>
 						</td>
 		            </tr>
 	            </form>

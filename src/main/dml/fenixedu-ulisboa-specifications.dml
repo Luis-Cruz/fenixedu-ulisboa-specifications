@@ -317,6 +317,7 @@ class FirstYearRegistrationConfiguration{
 	boolean requiresVaccination;
 	boolean requiresCoursesEnrolment;
 	boolean requiresClassesEnrolment;
+	boolean requiresShiftsEnrolment;
 }
 
 relation DegreeFirstYearRegistrationConfiguration{

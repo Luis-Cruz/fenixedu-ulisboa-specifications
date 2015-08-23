@@ -113,6 +113,14 @@ ${portal.angularToolkit()}
 				</li>
 				<c:if test="${enrolmentBean.selected}"><c:set var="selectedEnrolmentBean" value="${enrolmentBean}" /></c:if>
 			</c:forEach>
+			<c:if test="${not empty returnURL }">
+    			<li role="presentation" class="<c:out value="${enrolmentBean.selected ? 'active' : ' '}" />">
+					<a href="${returnURL}">
+					 	<spring:message code="message.shiftEnrolment.finishEnrolment"/>
+						<br/><span class="small text-muted"></span>
+					</a>
+				</li>
+    		</c:if>
 		</ul>	
 		<p>&nbsp;</p>
 	
