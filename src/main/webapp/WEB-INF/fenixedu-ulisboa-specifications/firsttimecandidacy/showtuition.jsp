@@ -48,7 +48,7 @@ ${portal.toolkit()}
 $(document).ready(function() {
 		//Hide included page header
 		$(".page-header").hide();
-	
+		$(".btn").hide();
 	
 	});
 </script>
