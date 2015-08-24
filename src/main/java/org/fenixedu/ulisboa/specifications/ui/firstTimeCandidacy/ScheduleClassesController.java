@@ -29,6 +29,7 @@ package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Optional;
 
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.EnrolmentPeriod;
@@ -125,19 +126,26 @@ public class ScheduleClassesController extends FenixeduUlisboaSpecificationsBase
         } else {
             executionSemesters = Collections.singleton(ExecutionYear.readCurrentExecutionYear().getFirstExecutionPeriod());
         }
-        SchoolClass firstUnfilledClass = readFirstUnfilledClass(studentCurricularPlan.getRegistration(), executionSemesters);
-        logger.warn("Registering student " + studentCurricularPlan.getPerson().getUsername() + " to class "
-                + firstUnfilledClass.getNome());
-        enrolOnShifts(firstUnfilledClass, studentCurricularPlan.getRegistration());
+        Optional<SchoolClass> firstUnfilledClass =
+                readFirstUnfilledClass(studentCurricularPlan.getRegistration(), executionSemesters);
+        if (firstUnfilledClass.isPresent()) {
+            logger.warn("Registering student " + studentCurricularPlan.getPerson().getUsername() + " to class "
+                    + firstUnfilledClass.get().getNome());
+            enrolOnShifts(firstUnfilledClass.get(), studentCurricularPlan.getRegistration());
+        } else {
+            logger.warn("No classes present. Skipping classes allocation for " + studentCurricularPlan.getPerson().getUsername()
+                    + ". If this is expected, ignore this message.");
+        }
     }
 
-    private SchoolClass readFirstUnfilledClass(Registration registration, final Collection<ExecutionSemester> executionSemesters) {
+    private Optional<SchoolClass> readFirstUnfilledClass(Registration registration,
+            final Collection<ExecutionSemester> executionSemesters) {
         ExecutionDegree executionDegree =
                 registration.getDegree().getExecutionDegreesForExecutionYear(ExecutionYear.readCurrentExecutionYear()).iterator()
                         .next();
         return executionDegree.getSchoolClassesSet().stream()
                 .filter(sc -> sc.getAnoCurricular().equals(1) && executionSemesters.contains(sc.getExecutionPeriod()))
-                .sorted(new MostFilledFreeClass()).findFirst().get();
+                .sorted(new MostFilledFreeClass()).findFirst();
     }
 
     @Atomic
