@@ -27,6 +27,8 @@
  */
 package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academictreasury.ui.customer.CustomerAccountingController;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsBaseController;
@@ -34,16 +36,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import pt.ist.fenixframework.Atomic;
+
 @BennuSpringController(value = FirstTimeCandidacyController.class)
 @RequestMapping("/fenixedu-ulisboa-specifications/firsttimecandidacy/showtuition")
 public class ShowTuitionController extends FenixeduUlisboaSpecificationsBaseController {
 
     @RequestMapping
     public String showtuition(Model model, RedirectAttributes redirectAttributes) {
+        createTuitions(FirstTimeCandidacyController.getStudentCandidacy().getRegistration());
         CustomerAccountingController customerAccountingController = new CustomerAccountingController();
         customerAccountingController.readCustomer(model, redirectAttributes);
-
         return "fenixedu-ulisboa-specifications/firsttimecandidacy/showtuition";
+    }
+
+    @Atomic
+    private void createTuitions(Registration registration) {
+        TreasuryBridgeAPIFactory.implementation().createAcademicDebts(registration);
     }
 
     @RequestMapping(value = "/continue")
