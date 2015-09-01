@@ -27,7 +27,10 @@
  */
 package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
+import static org.fenixedu.bennu.FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE;
+
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.fenixedu.academic.domain.Country;
@@ -35,7 +38,6 @@ import org.fenixedu.academic.domain.District;
 import org.fenixedu.academic.domain.DistrictSubdivision;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.predicate.AccessControl;
-import org.fenixedu.bennu.FenixeduUlisboaSpecificationsSpringConfiguration;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
@@ -124,29 +126,25 @@ public class FiliationFormController extends FenixeduUlisboaSpecificationsBaseCo
                     model, redirectAttributes);
         } catch (Exception de) {
 
-            addErrorMessage(BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE, "label.error.create")
-                    + de.getLocalizedMessage(), model);
+            addErrorMessage(BundleUtil.getString(BUNDLE, "label.error.create") + de.getLocalizedMessage(), model);
             return fillfiliation(model);
         }
     }
 
     private boolean validate(FiliationForm form, Model model) {
         if ((StringUtils.isEmpty(form.getFatherName())) || (StringUtils.isEmpty(form.getMotherName()))) {
-            addErrorMessage(
-                    BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE, "error.parentsName.required"),
-                    model);
+            addErrorMessage(BundleUtil.getString(BUNDLE, "error.parentsName.required"), model);
             return false;
         }
         if (form.getDateOfBirth() == null) {
-            addErrorMessage(
-                    BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE, "error.birthDate.required"),
-                    model);
+            addErrorMessage(BundleUtil.getString(BUNDLE, "error.birthDate.required"), model);
             return false;
         }
 
         if (form.getCountryOfBirth().isDefaultCountry()) {
-            if (form.getDistrictOfBirth() == null || form.getDistrictSubdivisionOfBirth() == null) {
-                addErrorMessage(BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE,
+            if (form.getDistrictOfBirth() == null || form.getDistrictSubdivisionOfBirth() == null
+                    || form.getParishOfBirth() == null) {
+                addErrorMessage(BundleUtil.getString(BUNDLE,
                         "error.candidacy.workflow.FiliationForm.zone.information.is.required.for.national.students"), model);
                 return false;
             }
@@ -175,16 +173,22 @@ public class FiliationFormController extends FenixeduUlisboaSpecificationsBaseCo
     @RequestMapping(value = "/district/{oid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody List<DistrictSubdivisionBean> readDistrictSubdivisions(@PathVariable("oid") District district,
             Model model) {
-        return district.getDistrictSubdivisionsSet().stream()
-                .map(ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName())).collect(Collectors.toList());
+        Function<DistrictSubdivision, DistrictSubdivisionBean> createSubdivisionBean =
+                ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName());
+        List<DistrictSubdivisionBean> subdivisions =
+                district.getDistrictSubdivisionsSet().stream().map(createSubdivisionBean).collect(Collectors.toList());
+        subdivisions.add(new DistrictSubdivisionBean("", ""));
+        return subdivisions;
     }
 
     @RequestMapping(value = "/districtSubdivision/{oid}", method = RequestMethod.GET,
             produces = "application/json; charset=utf-8")
-    public @ResponseBody List<DistrictSubdivisionBean> readParish(@PathVariable("oid") DistrictSubdivision districtSubdivision,
-            Model model) {
-        return districtSubdivision.getParishSet().stream()
-                .map(ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName())).collect(Collectors.toList());
+    public @ResponseBody List<ParishBean> readParish(@PathVariable("oid") DistrictSubdivision districtSubdivision, Model model) {
+        Function<Parish, ParishBean> createParishBean = p -> new ParishBean(p.getExternalId(), p.getName());
+        List<ParishBean> parishes =
+                districtSubdivision.getParishSet().stream().map(createParishBean).collect(Collectors.toList());
+        parishes.add(new ParishBean("", ""));
+        return parishes;
     }
 
     public static class FiliationForm {

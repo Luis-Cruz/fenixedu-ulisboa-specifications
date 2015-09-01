@@ -125,7 +125,7 @@ ${portal.toolkit()}
 				<div class="col-sm-10">
 					<select id="residenceInformationForm_districtOfResidence"
 						class="js-example-basic-single" name="districtOfResidence">
-						<option id=""></option>
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -140,6 +140,7 @@ ${portal.toolkit()}
 						id="residenceInformationForm_districtSubdivisionOfResidence"
 						class="js-example-basic-single"
 						name="districtSubdivisionOfResidence">
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -150,7 +151,9 @@ ${portal.toolkit()}
 				</div>
 
 				<div class="col-sm-10">
-					<select id="residenceInformationForm_parishOfResidence" class="form-control" name="parishOfResidence"></select>
+					<select id="residenceInformationForm_parishOfResidence" class="form-control" name="parishOfResidence">
+						<option value=""></option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -219,7 +222,7 @@ ${portal.toolkit()}
 					<select id="residenceInformationForm_schoolTimeDistrictOfResidence"
 						class="js-example-basic-single"
 						name="schoolTimeDistrictOfResidence">
-						<option id=""></option>
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -234,6 +237,7 @@ ${portal.toolkit()}
 						id="residenceInformationForm_schoolTimeDistrictSubdivisionOfResidence"
 						class="js-example-basic-single"
 						name="schoolTimeDistrictSubdivisionOfResidence">
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -244,7 +248,9 @@ ${portal.toolkit()}
 				</div>
 
 				<div class="col-sm-10">
-					<select id="residenceInformationForm_schoolTimeParishOfResidence" class="form-control" name="schoolTimeParishOfResidence"></select>
+					<select id="residenceInformationForm_schoolTimeParishOfResidence" class="form-control" name="schoolTimeParishOfResidence">
+						<option value=""></option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -254,7 +260,7 @@ ${portal.toolkit()}
 
 				<div class="col-sm-4">
 					<select id="residenceInformationForm_schoolTimeResidenceType" class="form-control" name="schoolTimeResidenceType">
-						<option value=""><spring:message code="label.choose.one"/></option>
+						<option value=""></option>
 						<c:forEach items="${residenceTypeValues}" var="residenceTypeValue">
 							<option value='<c:out value='${residenceTypeValue.externalId}'/>'><c:out value='${residenceTypeValue.description.content}' /></option>
 						</c:forEach>
@@ -333,6 +339,9 @@ $(document).ready(function() {
         		             			}	  
         		             	    );
           					$("#residenceInformationForm_districtSubdivisionOfResidence").select2().select2('val', '<c:out value='${residenceInformationForm.districtSubdivisionOfResidence.externalId}'/>');
+
+          					$("#residenceInformationForm_districtSubdivisionOfResidence").select2().select2('val', '');
+          					$("#residenceInformationForm_parishOfResidence").select2().select2('val', '');
           		 		}
           		 });
           		 
@@ -376,6 +385,7 @@ $(document).ready(function() {
 			             			}	  
 			             	    );
 						$("#residenceInformationForm_parishOfResidence").select2();
+      					$("#residenceInformationForm_parishOfResidence").select2().select2('val', '');
 			 		}
 			 });
 			 
@@ -427,6 +437,8 @@ $(document).ready(function() {
         		             			}	  
         		             	    );
           					$("#residenceInformationForm_schoolTimeDistrictSubdivisionOfResidence").select2().select2('val', '<c:out value='${residenceInformationForm.schoolTimeDistrictSubdivisionOfResidence.externalId}'/>');
+          					$("#residenceInformationForm_schoolTimeDistrictSubdivisionOfResidence").select2().select2('val', '');
+          					$("#residenceInformationForm_schoolTimeParishOfResidence").select2().select2('val', '');
           		 		}
           		 });
           		 
@@ -529,6 +541,7 @@ $(document).ready(function() {
 			             			}	  
 			             	    );
 						$("#residenceInformationForm_schoolTimeParishOfResidence").select2();
+      					$("#residenceInformationForm_schoolTimeParishOfResidence").select2().select2('val', '');
 			 		}
 			 });
 			 

@@ -95,6 +95,7 @@ ${portal.toolkit()}
 						id="originInformationForm_districtWhereFinishedPreviousCompleteDegree"
 						class="form-control"
 						name="districtWhereFinishedPreviousCompleteDegree">
+						<option value=""></option>
 					</select>
 
 				</div>
@@ -110,6 +111,7 @@ ${portal.toolkit()}
 						id="originInformationForm_districtSubdivisionWhereFinishedPreviousCompleteDegree"
 						class="form-control"
 						name="districtSubdivisionWhereFinishedPreviousCompleteDegree">
+						<option value=""></option>
 					</select>
 
 				</div>
@@ -122,6 +124,7 @@ ${portal.toolkit()}
 				<div class="col-sm-4">
 					<select id="originInformationForm_schoolLevel" class="form-control"
 						name="schoolLevel">
+						<option value=""></option>
 						<c:forEach items="${schoolLevelValues}" var="field">
 							<option value='<c:out value='${field}'/>'><c:out
 									value='${field.localizedName}' /></option>
@@ -214,6 +217,7 @@ ${portal.toolkit()}
 				<div class="col-sm-4">
 					<select id="originInformationForm_highSchoolType"
 						class="form-control" name="highSchoolType">
+						<option value=""></option>
 						<c:forEach items="${highSchoolTypeValues}" var="field">
 							<option value='<c:out value='${field}'/>'><spring:message code="${field.name}"/></option>
 						</c:forEach>
@@ -324,7 +328,6 @@ $(document).ready(function() {
 			$("#originInformationForm_degreeDesignation_row").show();
 		}
 		
-		// This is javascript: god knows why this is invoked twice. Maybe.
 		if (schoolLevelChangeCount > 1) {
 			$("#originInformationForm_institution").val("").trigger("change")
 			$("#originInformationForm_raidesDegreeDesignation").val("");
@@ -416,6 +419,7 @@ $(document).ready(function() {
 		             			}	  
 		             	    );
   					$("#originInformationForm_districtSubdivisionWhereFinishedPreviousCompleteDegree").select2();
+  					$("#originInformationForm_districtSubdivisionWhereFinishedPreviousCompleteDegree").select2().select2('val', '');
   		 		}
   		 });
   		 

@@ -29,6 +29,7 @@ package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -54,6 +55,7 @@ import org.fenixedu.ulisboa.specifications.domain.PersonUlisboaSpecifications;
 import org.fenixedu.ulisboa.specifications.domain.ResidenceType;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsBaseController;
 import org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy.FiliationFormController.DistrictSubdivisionBean;
+import org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy.FiliationFormController.ParishBean;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,8 +65,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pt.ist.fenixframework.Atomic;
-import edu.emory.mathcs.backport.java.util.Collections;
 import pt.ist.standards.geographic.Planet;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 @BennuSpringController(value = FirstTimeCandidacyController.class)
 @RequestMapping(ResidenceInformationFormController.CONTROLLER_URL)
@@ -330,16 +332,22 @@ public class ResidenceInformationFormController extends FenixeduUlisboaSpecifica
     @RequestMapping(value = "/district/{oid}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
     public @ResponseBody List<DistrictSubdivisionBean> readDistrictSubdivisions(@PathVariable("oid") District district,
             Model model) {
-        return district.getDistrictSubdivisionsSet().stream()
-                .map(ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName())).collect(Collectors.toList());
+        Function<DistrictSubdivision, DistrictSubdivisionBean> createSubdivisionBean =
+                ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName());
+        List<DistrictSubdivisionBean> subdivisions =
+                district.getDistrictSubdivisionsSet().stream().map(createSubdivisionBean).collect(Collectors.toList());
+        subdivisions.add(new DistrictSubdivisionBean("", ""));
+        return subdivisions;
     }
 
     @RequestMapping(value = "/districtSubdivision/{oid}", method = RequestMethod.GET,
             produces = "application/json; charset=utf-8")
-    public @ResponseBody List<DistrictSubdivisionBean> readParish(@PathVariable("oid") DistrictSubdivision districtSubdivision,
-            Model model) {
-        return districtSubdivision.getParishSet().stream()
-                .map(ds -> new DistrictSubdivisionBean(ds.getExternalId(), ds.getName())).collect(Collectors.toList());
+    public @ResponseBody List<ParishBean> readParish(@PathVariable("oid") DistrictSubdivision districtSubdivision, Model model) {
+        Function<Parish, ParishBean> createParishBean = p -> new ParishBean(p.getExternalId(), p.getName());
+        List<ParishBean> parishes =
+                districtSubdivision.getParishSet().stream().map(createParishBean).collect(Collectors.toList());
+        parishes.add(new ParishBean("", ""));
+        return parishes;
     }
 
     @RequestMapping(value = "/postalCode", method = RequestMethod.GET, produces = "application/json; charset=utf-8")

@@ -88,7 +88,7 @@ ${portal.toolkit()}
 				<div class="col-sm-10">
 					<select id="filiationForm_secondNationality"
 						class="js-example-basic-single" name="secondNationality">
-						<option value=""><spring:message code="label.choose.one"/></option>
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -120,9 +120,8 @@ ${portal.toolkit()}
 				</div>
 
 				<div class="col-sm-10">
-					<select id="filiationForm_districtOfBirth"
-						class="js-example-basic-single" name="districtOfBirth">
-						<option id=""></option>
+					<select id="filiationForm_districtOfBirth" class="js-example-basic-single" name="districtOfBirth">
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -133,8 +132,8 @@ ${portal.toolkit()}
 				</div>
 
 				<div class="col-sm-10">
-					<select id="filiationForm_districtSubdivisionOfBirth"
-						class="js-example-basic-single" name="districtSubdivisionOfBirth">
+					<select id="filiationForm_districtSubdivisionOfBirth" class="js-example-basic-single" name="districtSubdivisionOfBirth">
+						<option value=""></option>
 					</select>
 				</div>
 			</div>
@@ -144,7 +143,9 @@ ${portal.toolkit()}
 				</div>
 
 				<div class="col-sm-10">
-					<select id="filiationForm_parishOfBirth" class="form-control"  name="parishOfBirth"></select>
+					<select id="filiationForm_parishOfBirth" class="js-example-basic-single"  name="parishOfBirth">
+						<option value=""></option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group row">
@@ -265,6 +266,8 @@ $(document).ready(function() {
         		             			}	  
         		             	    );
           					$("#filiationForm_districtSubdivisionOfBirth").select2();
+          					$("#filiationForm_districtSubdivisionOfBirth").select2().select2('val', '');
+          					$("#filiationForm_parishOfBirth").select2().select2('val', '');
           		 		}
           		 });
           		 
@@ -308,6 +311,7 @@ $(document).ready(function() {
 				             			}	  
 				             	    );
 							$("#filiationForm_parishOfBirth").select2();
+          					$("#filiationForm_parishOfBirth").select2().select2('val', '');
 				 		}
 				 });
 				 

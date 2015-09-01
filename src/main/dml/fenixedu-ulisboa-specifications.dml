@@ -153,7 +153,8 @@ class PersonUlisboaSpecifications {
 	LocalDate vaccinationValidity;
 	boolean hasDisabilities;
 	String otherDisabilityType;
-	boolean needsDisabilitySupport;
+	//Boolean because this slot must support null (= not filled in) 
+	Boolean needsDisabilitySupport;
 	String otherUniversityDiscoveryMeans;
 	String otherUniversityChoiceMotivation;
 	String otherDislocatedResidenceType;

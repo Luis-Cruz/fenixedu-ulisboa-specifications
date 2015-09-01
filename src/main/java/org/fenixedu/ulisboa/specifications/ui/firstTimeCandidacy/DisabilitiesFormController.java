@@ -44,8 +44,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pt.ist.fenixframework.Atomic;
-import pt.ist.fenixframework.DomainObject;
-import pt.ist.fenixframework.FenixFramework;
 import edu.emory.mathcs.backport.java.util.Collections;
 
 @BennuSpringController(value = FirstTimeCandidacyController.class)
@@ -74,7 +72,7 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
             if (personUlisboa != null) {
                 form.setHasDisabilities(personUlisboa.getHasDisabilities());
                 if (personUlisboa.getDisabilityType() != null) {
-                    form.setDisabilityType(personUlisboa.getDisabilityType().getExternalId());
+                    form.setDisabilityType(personUlisboa.getDisabilityType());
                 }
                 form.setOtherDisabilityType(personUlisboa.getOtherDisabilityType());
                 form.setNeedsDisabilitySupport(personUlisboa.getNeedsDisabilitySupport());
@@ -102,14 +100,15 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
 
     private boolean validate(DisabilitiesForm form, Model model) {
         if (form.getHasDisabilities()) {
-            DomainObject disabilityTypeObject = FenixFramework.getDomainObject(form.getDisabilityType());
-            if (!(disabilityTypeObject instanceof DisabilityType) || !FenixFramework.isDomainObjectValid(disabilityTypeObject)) {
-                throw new RuntimeException("Could not materialize DisabilityType from ID: " + form.getDisabilityType());
-            }
-
-            if (((DisabilityType) disabilityTypeObject).isOther() && StringUtils.isEmpty(form.getOtherDisabilityType())) {
+            if ((form.getDisabilityType() == null) || form.getDisabilityType().isOther()
+                    && StringUtils.isEmpty(form.getOtherDisabilityType())) {
                 addErrorMessage(BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE,
-                        "error.candidacy.workflow.DisabilitiesForm.otherDisabilityType.must.be.filled"), model);
+                        "error.candidacy.workflow.DisabilitiesForm.disabilityType.must.be.filled"), model);
+                return false;
+            }
+            if (form.getNeedsDisabilitySupport() == null) {
+                addErrorMessage(BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE,
+                        "error.candidacy.workflow.DisabilitiesForm.needsDisabilitySupport.must.be.filled"), model);
                 return false;
             }
         }
@@ -121,12 +120,7 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
         PersonUlisboaSpecifications personUlisboa = PersonUlisboaSpecifications.findOrCreate(AccessControl.getPerson());
         personUlisboa.setHasDisabilities(form.getHasDisabilities());
         if (form.getHasDisabilities()) {
-            DomainObject disabilityTypeObject = FenixFramework.getDomainObject(form.getDisabilityType());
-            if (!(disabilityTypeObject instanceof DisabilityType) || !FenixFramework.isDomainObjectValid(disabilityTypeObject)) {
-                throw new RuntimeException("Could not materialize DisabilityType from ID: " + form.getDisabilityType());
-            }
-
-            personUlisboa.setDisabilityType((DisabilityType) disabilityTypeObject);
+            personUlisboa.setDisabilityType(form.getDisabilityType());
             personUlisboa.setOtherDisabilityType(form.getOtherDisabilityType());
             personUlisboa.setNeedsDisabilitySupport(form.getNeedsDisabilitySupport());
         } else {
@@ -139,11 +133,11 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
     public static class DisabilitiesForm {
         private boolean hasDisabilities = false;
 
-        private String disabilityType;
+        private DisabilityType disabilityType;
 
         private String otherDisabilityType;
 
-        private boolean needsDisabilitySupport;
+        private Boolean needsDisabilitySupport = null;
 
         public boolean getHasDisabilities() {
             return hasDisabilities;
@@ -153,11 +147,11 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
             this.hasDisabilities = hasDisabilities;
         }
 
-        public String getDisabilityType() {
+        public DisabilityType getDisabilityType() {
             return disabilityType;
         }
 
-        public void setDisabilityType(String disabilityType) {
+        public void setDisabilityType(DisabilityType disabilityType) {
             this.disabilityType = disabilityType;
         }
 
@@ -169,11 +163,11 @@ public class DisabilitiesFormController extends FenixeduUlisboaSpecificationsBas
             this.otherDisabilityType = otherDisabilityType;
         }
 
-        public boolean getNeedsDisabilitySupport() {
+        public Boolean getNeedsDisabilitySupport() {
             return needsDisabilitySupport;
         }
 
-        public void setNeedsDisabilitySupport(boolean needsDisabilitySupport) {
+        public void setNeedsDisabilitySupport(Boolean needsDisabilitySupport) {
             this.needsDisabilitySupport = needsDisabilitySupport;
         }
     }

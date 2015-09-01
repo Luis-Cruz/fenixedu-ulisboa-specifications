@@ -94,12 +94,13 @@ ${portal.toolkit()}
 
 				<div class="col-sm-4">
 					<select id="disabilitiesForm_disabilityType" class="form-control" name="disabilityType">
+						<option value=""></option>
 						<c:forEach items="${disabilityTypeValues}" var="disabilityTypeValue">
 							<option value='<c:out value='${disabilityTypeValue.externalId}'/>'><c:out value='${disabilityTypeValue.description.content}' /></option>
 						</c:forEach>
 					</select>
 					<script>
-						$("#disabilitiesForm_disabilityType").val('<c:out value='${not empty param.disabilitytype ? param.disabilitytype : disabilitiesForm.disabilityType }'/>');
+						$("#disabilitiesForm_disabilityType").val('<c:out value='${not empty param.disabilitytype ? param.disabilitytype : disabilitiesForm.disabilityType.externalId }'/>');
 					</script>
 				</div>
 			</div>
@@ -121,6 +122,7 @@ ${portal.toolkit()}
 
 				<div class="col-sm-2">
 					<select id="disabilitiesForm_needsDisabilitySupport" name="needsDisabilitySupport" class="form-control">
+						<option value=""></option>
 						<option value="false"><spring:message code="label.no" /></option>
 						<option value="true"><spring:message code="label.yes" /></option>
 					</select>
