@@ -27,7 +27,9 @@
  */
 package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
+import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.treasury.ITuitionTreasuryEvent;
 import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academictreasury.ui.customer.CustomerAccountingController;
 import org.fenixedu.bennu.spring.portal.BennuSpringController;
@@ -44,10 +46,21 @@ public class ShowTuitionController extends FenixeduUlisboaSpecificationsBaseCont
 
     @RequestMapping
     public String showtuition(Model model, RedirectAttributes redirectAttributes) {
-        createTuitions(FirstTimeCandidacyController.getStudentCandidacy().getRegistration());
+        Registration registration = FirstTimeCandidacyController.getStudentCandidacy().getRegistration();
+        createTuitions(registration);
+        checkTuitions(registration);
         CustomerAccountingController customerAccountingController = new CustomerAccountingController();
         customerAccountingController.readCustomer(model, redirectAttributes);
         return "fenixedu-ulisboa-specifications/firsttimecandidacy/showtuition";
+    }
+
+    private void checkTuitions(Registration registration) {
+        ITuitionTreasuryEvent event =
+                TreasuryBridgeAPIFactory.implementation().getTuitionForRegistrationTreasuryEvent(registration,
+                        ExecutionYear.readCurrentExecutionYear());
+        if (event == null) {
+            throw new RuntimeException("Tuitions are not properly configured!");
+        }
     }
 
     @Atomic
