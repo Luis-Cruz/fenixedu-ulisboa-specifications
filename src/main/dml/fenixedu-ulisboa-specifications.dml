@@ -311,6 +311,10 @@ relation DgesStudentImportationProcessStudentCandidacy {
 	}
 }
 
+class candidacy.FirstTimeCandidacy extends .org.fenixedu.academic.domain.candidacy.StudentCandidacy {
+}
+
+
 // ==================== First Year School Configuration ====================
 
 class FirstYearRegistrationConfiguration{

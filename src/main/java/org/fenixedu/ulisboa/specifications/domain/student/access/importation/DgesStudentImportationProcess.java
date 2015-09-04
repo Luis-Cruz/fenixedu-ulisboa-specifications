@@ -43,8 +43,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.QueueJob;
 import org.fenixedu.academic.domain.QueueJobResult;
-import org.fenixedu.academic.domain.candidacy.DegreeCandidacy;
-import org.fenixedu.academic.domain.candidacy.IMDCandidacy;
 import org.fenixedu.academic.domain.candidacy.IngressionType;
 import org.fenixedu.academic.domain.candidacy.StandByCandidacySituation;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
@@ -57,6 +55,7 @@ import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
 import org.fenixedu.spaces.domain.Space;
 import org.fenixedu.ulisboa.specifications.domain.ULisboaSpecificationsRoot;
+import org.fenixedu.ulisboa.specifications.domain.candidacy.FirstTimeCandidacy;
 import org.fenixedu.ulisboa.specifications.domain.student.access.DegreeCandidateDTO;
 import org.fenixedu.ulisboa.specifications.domain.student.access.DegreeCandidateDTO.MatchingPersonException;
 import org.fenixedu.ulisboa.specifications.domain.student.access.DegreeCandidateDTO.NotFoundPersonException;
@@ -442,18 +441,12 @@ public class DgesStudentImportationProcess extends DgesStudentImportationProcess
         ExecutionDegree executionDegree = degreeCandidateDTO.getExecutionDegree(getExecutionYear(), getSpace());
         StudentCandidacy candidacy = null;
 
-        if (executionDegree.getDegree().getDegreeType().isBolonhaDegree()) {
+        if (executionDegree.getDegree().getDegreeType().isBolonhaDegree()
+                || executionDegree.getDegree().getDegreeType().isIntegratedMasterDegree()) {
             candidacy =
-                    new DegreeCandidacy(person, executionDegree, getPerson(), degreeCandidateDTO.getEntryGrade(),
+                    new FirstTimeCandidacy(person, executionDegree, getPerson(), degreeCandidateDTO.getEntryGrade(),
                             degreeCandidateDTO.getContigent(), degreeCandidateDTO.getIngression(),
                             degreeCandidateDTO.getEntryPhase(), degreeCandidateDTO.getPlacingOption());
-
-        } else if (executionDegree.getDegree().getDegreeType().isIntegratedMasterDegree()) {
-            candidacy =
-                    new IMDCandidacy(person, executionDegree, getPerson(), degreeCandidateDTO.getEntryGrade(),
-                            degreeCandidateDTO.getContigent(), degreeCandidateDTO.getIngression(),
-                            degreeCandidateDTO.getEntryPhase(), degreeCandidateDTO.getPlacingOption());
-
         } else {
             throw new RuntimeException("Unexpected degree type from DGES file");
         }

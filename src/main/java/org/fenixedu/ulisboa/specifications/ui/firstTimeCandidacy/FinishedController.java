@@ -27,6 +27,10 @@
  */
 package org.fenixedu.ulisboa.specifications.ui.firstTimeCandidacy;
 
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.candidacy.AdmittedCandidacySituation;
+import org.fenixedu.academic.domain.candidacy.RegisteredCandidacySituation;
+import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
 import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.predicate.AccessControl;
@@ -40,6 +44,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import pt.ist.fenixframework.Atomic;
 
 @BennuSpringController(value = FirstTimeCandidacyController.class)
 @RequestMapping("/fenixedu-ulisboa-specifications/firsttimecandidacy/finished")
@@ -55,8 +61,12 @@ public class FinishedController extends FenixeduUlisboaSpecificationsBaseControl
 
     @RequestMapping(value = "/printalldocuments", produces = "application/pdf")
     public ResponseEntity<byte[]> finishedToPrintAllDocuments(Model model, RedirectAttributes redirectAttributes) {
-        byte[] pdfBytes = FirstTimeCandidacyController.getStudentCandidacy().getSummaryFile().getContent();
-        String filename = AccessControl.getPerson().getStudent().getNumber() + ".pdf";
+        Person person = AccessControl.getPerson();
+        StudentCandidacy candidacy = FirstTimeCandidacyController.getStudentCandidacy();
+        closeStudentCandidacy(person, candidacy);
+
+        byte[] pdfBytes = candidacy.getSummaryFile().getContent();
+        String filename = person.getStudent().getNumber() + ".pdf";
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "inline;filename=" + filename);
@@ -64,5 +74,13 @@ public class FinishedController extends FenixeduUlisboaSpecificationsBaseControl
         headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
         ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(pdfBytes, headers, HttpStatus.OK);
         return response;
+    }
+
+    @Atomic
+    private void closeStudentCandidacy(Person person, StudentCandidacy candidacy) {
+        AdmittedCandidacySituation situation = new AdmittedCandidacySituation(candidacy, person);
+        situation.setSituationDate(situation.getSituationDate().minusMinutes(1));
+
+        new RegisteredCandidacySituation(candidacy, person);
     }
 }

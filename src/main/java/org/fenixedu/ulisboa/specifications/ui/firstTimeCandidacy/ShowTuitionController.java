@@ -47,7 +47,12 @@ public class ShowTuitionController extends FenixeduUlisboaSpecificationsBaseCont
     @RequestMapping
     public String showtuition(Model model, RedirectAttributes redirectAttributes) {
         Registration registration = FirstTimeCandidacyController.getStudentCandidacy().getRegistration();
+
+        //Temporary Fix: due to asyncronous calls that create tuition debts from rules in the academic-treasury
+        // it is necessary to invoke the tuition creation twice, in two diferent transactions.
         createTuitions(registration);
+        createTuitions(registration);
+
         checkTuitions(registration);
         CustomerAccountingController customerAccountingController = new CustomerAccountingController();
         customerAccountingController.readCustomer(model, redirectAttributes);

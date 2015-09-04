@@ -36,8 +36,6 @@ import org.fenixedu.academic.domain.ExecutionYear;
 import org.fenixedu.academic.domain.Person;
 import org.fenixedu.academic.domain.StudentCurricularPlan;
 import org.fenixedu.academic.domain.candidacy.Candidacy;
-import org.fenixedu.academic.domain.candidacy.DegreeCandidacy;
-import org.fenixedu.academic.domain.candidacy.IMDCandidacy;
 import org.fenixedu.academic.domain.candidacy.StudentCandidacy;
 import org.fenixedu.academic.domain.student.PersonalIngressionData;
 import org.fenixedu.academic.domain.student.PrecedentDegreeInformation;
@@ -45,12 +43,17 @@ import org.fenixedu.academic.domain.student.Registration;
 import org.fenixedu.academic.domain.student.Student;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationState;
 import org.fenixedu.academic.domain.student.registrationStates.RegistrationStateType;
+import org.fenixedu.academic.domain.treasury.TreasuryBridgeAPIFactory;
 import org.fenixedu.academic.predicate.AccessControl;
+import org.fenixedu.bennu.FenixeduUlisboaSpecificationsSpringConfiguration;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.bennu.spring.portal.SpringFunctionality;
+import org.fenixedu.ulisboa.specifications.domain.candidacy.FirstTimeCandidacy;
 import org.fenixedu.ulisboa.specifications.domain.student.access.StudentAccessServices;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsBaseController;
 import org.fenixedu.ulisboa.specifications.ui.FenixeduUlisboaSpecificationsController;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.YearMonthDay;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +61,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import pt.ist.fenixframework.Atomic;
 
-@SpringFunctionality(app = FenixeduUlisboaSpecificationsController.class, title = "label.title.firstTimeCandidacy")
+@SpringFunctionality(app = FenixeduUlisboaSpecificationsController.class, title = "label.firstTimeCandidacy")
 @RequestMapping(FirstTimeCandidacyController.CONTROLLER_URL)
 public class FirstTimeCandidacyController extends FenixeduUlisboaSpecificationsBaseController {
 
@@ -69,18 +72,23 @@ public class FirstTimeCandidacyController extends FenixeduUlisboaSpecificationsB
 
     @RequestMapping
     public String home(Model model) {
-        Stream<Candidacy> firstTimeCandidacies =
-                AccessControl.getPerson().getCandidaciesSet().stream().filter(firstTimeCandidaciesPredicate);
+        Person person = AccessControl.getPerson();
+        Stream<Candidacy> firstTimeCandidacies = person.getCandidaciesSet().stream().filter(arefirstTime);
         long count = firstTimeCandidacies.count();
         if (count == 0) {
             throw new RuntimeException(
-                    "Students with no DegreeCandidacies or IMDCandidacies are not supported in the first time registration flow");
+                    "Students with no FirstTimeCandidacies are not supported in the first time registration flow");
         }
         if (count > 1) {
             throw new RuntimeException(
-                    "Students with multiple DegreeCandidacies or IMDCandidacies are not supported in the first time registration flow");
+                    "Students with multiple FirstTimeCandidacies are not supported in the first time registration flow");
         }
 
+        if (TreasuryBridgeAPIFactory.implementation().isAcademicalActsBlocked(person, new LocalDate())) {
+            addErrorMessage(
+                    BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE, "error.academicalActsBlocked"),
+                    model);
+        }
         return "fenixedu-ulisboa-specifications/firsttimecandidacy/instructions";
     }
 
@@ -93,13 +101,11 @@ public class FirstTimeCandidacyController extends FenixeduUlisboaSpecificationsB
                 model, redirectAttributes);
     }
 
-    private static Predicate<Candidacy> firstTimeCandidaciesPredicate =
-            c -> ((c instanceof DegreeCandidacy) || (c instanceof IMDCandidacy))
-                    && ((StudentCandidacy) c).getExecutionYear().equals(ExecutionYear.readCurrentExecutionYear());
+    private static Predicate<Candidacy> arefirstTime = c -> (c instanceof FirstTimeCandidacy)
+            && ((StudentCandidacy) c).getExecutionYear().equals(ExecutionYear.readCurrentExecutionYear());
 
     public static StudentCandidacy getStudentCandidacy() {
-        Stream<Candidacy> firstTimeCandidacies =
-                AccessControl.getPerson().getCandidaciesSet().stream().filter(firstTimeCandidaciesPredicate);
+        Stream<Candidacy> firstTimeCandidacies = AccessControl.getPerson().getCandidaciesSet().stream().filter(arefirstTime);
         return (StudentCandidacy) firstTimeCandidacies.findAny().get();
     }
 

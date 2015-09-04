@@ -263,7 +263,9 @@ public class PersonalInformationFormController extends FenixeduUlisboaSpecificat
     }
 
     private boolean testsMode() {
-        return CoreConfiguration.getConfiguration().developmentMode() || ULisboaConfiguration.getConfiguration().isQualityMode();
+        Boolean devMode = CoreConfiguration.getConfiguration().developmentMode();
+        Boolean qualityMode = ULisboaConfiguration.getConfiguration().isQualityMode();
+        return (devMode != null && devMode == true) || (qualityMode != null && qualityMode == true);
     }
 
     @Atomic

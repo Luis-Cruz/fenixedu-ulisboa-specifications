@@ -236,7 +236,7 @@ public class OriginInformationFormController extends FenixeduUlisboaSpecificatio
             return false;
         }
 
-        if (form.getHighSchoolType() == null) {
+        if (form.getSchoolLevel().isHighSchoolOrEquivalent() && form.getHighSchoolType() == null) {
             addErrorMessage(BundleUtil.getString(FenixeduUlisboaSpecificationsSpringConfiguration.BUNDLE,
                     "error.highSchoolType.required"), model);
             return false;

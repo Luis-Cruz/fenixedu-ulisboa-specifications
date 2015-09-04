@@ -1,3 +1,4 @@
+<%@page import="org.fenixedu.academic.domain.organizationalStructure.Unit"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
@@ -34,12 +35,16 @@ ${portal.toolkit()}
 	</h1>
 </div>
 
+<div class="well">
+	<p><spring:message code="label.firstTimeCandidacy.instructions.details" arguments='<%= Unit.getInstitutionName().getContent()  %>' htmlEscape="false"/></p>
+</div>
 
 <%-- NAVIGATION --%>
+<c:if test="${empty errorMessages}">
 <div class="well well-sm" style="display:inline-block">
-	
-		<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<a class="" href="${pageContext.request.contextPath}/fenixedu-ulisboa-specifications/firsttimecandidacy/home/continue"><spring:message code="label.event.firstTimeCandidacy.continue"  /></a>	
+	<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<a class="" href="${pageContext.request.contextPath}/fenixedu-ulisboa-specifications/firsttimecandidacy/home/continue"><spring:message code="label.event.firstTimeCandidacy.continue"  /></a>
 </div>
+</c:if>
 	<c:if test="${not empty infoMessages}">
 				<div class="alert alert-info" role="alert">
 					
